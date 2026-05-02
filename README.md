@@ -77,7 +77,7 @@ Open **http://localhost:5173**. The app expects the API at **http://localhost:32
 | Server (DB, JWT, Stripe secret, OAuth, SMTP, Cloudinary) | `Web_Project_Backend/.env` — template: `.env.example` |
 | Client (Stripe publishable key, Google client ID) | `Web_Project_Frontend_/my-project/.env` — template: `.env.example` |
 
-Never commit real `.env` files or API secrets.
+Never commit real `.env` files or API secrets. The backend reads **Stripe** from `STRIPE_SECRET_KEY` (used for user subscriptions and optional scheduled seller payouts—if unset, payout jobs log a warning and skip).
 
 ## API overview
 
