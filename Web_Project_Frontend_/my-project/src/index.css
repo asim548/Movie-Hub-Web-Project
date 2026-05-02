@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-[#070812] text-slate-100 antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 20% 10%, rgba(124, 58, 237, 0.22), transparent 55%),
+      radial-gradient(1000px 500px at 85% 15%, rgba(56, 189, 248, 0.10), transparent 55%),
+      radial-gradient(900px 500px at 50% 90%, rgba(217, 70, 239, 0.12), transparent 55%);
+  }
+  :root[data-theme='light'] body {
+    @apply bg-slate-100 text-slate-900;
+    background-image:
+      radial-gradient(1200px 600px at 20% 10%, rgba(99, 102, 241, 0.12), transparent 55%),
+      radial-gradient(1000px 500px at 85% 15%, rgba(14, 165, 233, 0.08), transparent 55%),
+      radial-gradient(900px 500px at 50% 90%, rgba(168, 85, 247, 0.08), transparent 55%);
+  }
+}
+
+@layer components {
+  .mh-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .mh-page {
+    @apply min-h-screen;
+  }
+
+  .mh-surface {
+    @apply bg-[#0f1018]/85 border border-white/10 rounded-2xl shadow-2xl shadow-black/40 backdrop-blur-sm;
+  }
+  :root[data-theme='light'] .mh-surface {
+    @apply bg-white/95 border-slate-200 shadow-lg shadow-slate-200/50;
+  }
+
+  .mh-card {
+    @apply bg-[#0c0d14] border border-white/10 rounded-2xl shadow-xl shadow-black/40;
+  }
+  :root[data-theme='light'] .mh-card {
+    @apply bg-white border-slate-200 shadow-md shadow-slate-300/30;
+  }
+
+  .mh-title {
+    @apply text-3xl sm:text-4xl font-black tracking-tight;
+  }
+
+  .mh-subtitle {
+    @apply text-slate-300;
+  }
+  :root[data-theme='light'] .mh-subtitle {
+    @apply text-slate-600;
+  }
+
+  .mh-header {
+    @apply sticky top-0 z-50 border-b border-white/10 bg-[#070812]/70 backdrop-blur;
+  }
+  :root[data-theme='light'] .mh-header {
+    @apply border-slate-200 bg-white/90;
+  }
+
+  .mh-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition;
+  }
+
+  .mh-btn-primary {
+    @apply mh-btn bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-900/30;
+  }
+
+  .mh-btn-secondary {
+    @apply mh-btn bg-white/10 hover:bg-white/15 text-white border border-white/10;
+  }
+  :root[data-theme='light'] .mh-btn-secondary {
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-300;
+  }
+
+  .mh-btn-danger {
+    @apply mh-btn bg-rose-600 hover:bg-rose-500 text-white;
+  }
+
+  .mh-input {
+    @apply w-full rounded-xl bg-[#141521] border border-white/10 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500;
+  }
+  :root[data-theme='light'] .mh-input {
+    @apply bg-white border-slate-300 text-slate-900 placeholder:text-slate-400;
+  }
+
+  .mh-table {
+    @apply w-full overflow-hidden rounded-2xl border border-white/10;
+  }
+
+  .mh-thead {
+    @apply bg-white/5 text-slate-200;
+  }
+
+  .mh-th {
+    @apply px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-300;
+  }
+
+  .mh-td {
+    @apply px-4 py-3 text-sm text-slate-100;
+  }
+
+  .mh-tr {
+    @apply border-t border-white/10 hover:bg-white/5;
+  }
+}
