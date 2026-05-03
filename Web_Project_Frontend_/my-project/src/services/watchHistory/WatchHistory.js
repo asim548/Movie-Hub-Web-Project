@@ -1,8 +1,9 @@
 // services/WatchHistoryService.js
 import axios from "axios";
+import { API_BASE_URL } from "../../config/apiBase.js";
 import { getAuthToken } from "../GetCookieValues";
 
-const BACKEND_URL = "http://localhost:3213";
+const BACKEND_URL = API_BASE_URL;
 
 export const getWatchHistory = async (userId, pageNo = 1) => {
     const response = await axios.get(`${BACKEND_URL}/watch-history/${userId}?page=${pageNo}`, {

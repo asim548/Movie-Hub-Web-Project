@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE_URL } from "../config/apiBase.js";
 
-const BACKEND_URL = "http://localhost:3213";
+const BACKEND_URL = API_BASE_URL;
 
 export const registerUserOrSeller = async (userOrSeller) => {
   try {

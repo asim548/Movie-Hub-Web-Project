@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../config/apiBase.js";
 import { getAuthToken, getLoggedInId } from "../GetCookieValues";
 
-const BACKEND_URL = "http://localhost:3213";
+const BACKEND_URL = API_BASE_URL;
 export const addSeller = async (userData) => {
     const config = {
       headers: {

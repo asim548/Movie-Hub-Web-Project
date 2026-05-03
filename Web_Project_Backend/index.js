@@ -160,7 +160,8 @@ mongoose.connect(mongoUri, {})
     .then(() => console.log("Connection built"))
     .catch((e) => console.log("Connection failed", e.message));
 
-app.listen(3213, () => {
-    console.log(`[${SERVER_ID}] Server is running on port 3213`);
-    console.log(`[${SERVER_ID}] Health: http://localhost:3213/health  or  /api/health`);
+const PORT = Number(process.env.PORT) || 3213;
+app.listen(PORT, () => {
+    console.log(`[${SERVER_ID}] Server is running on port ${PORT}`);
+    console.log(`[${SERVER_ID}] Health: /health  or  /api/health`);
 });

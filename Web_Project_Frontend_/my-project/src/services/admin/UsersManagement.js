@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../config/apiBase.js";
 import { getAuthToken } from "../GetCookieValues";
 
-const BACKEND_URL = "http://localhost:3213";
+const BACKEND_URL = API_BASE_URL;
 
 // Add User Service
 export const addUser = async (userData) => {

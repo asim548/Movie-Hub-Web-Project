@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../../../config/apiBase.js';
 import { getAuthToken, getLoggedInId } from '../../../services/GetCookieValues';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +21,7 @@ const CardDetailsForm = () => {
 
     const loadSavedCard = async () => {
         try {
-            const response = await axios.get(`http://localhost:3213/seller/card-details/${sellerId}`, {
+            const response = await axios.get(`${API_BASE_URL}/seller/card-details/${sellerId}`, {
                 headers: {
                     Authorization: `Bearer ${getAuthToken() || ''}`,
                 },
@@ -51,7 +52,7 @@ const CardDetailsForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:3213" + '/seller/card-details', formData);
+            const response = await axios.post(`${API_BASE_URL}/seller/card-details`, formData);
             setResponseMessage(response.data.message);
             setErrorMessage('');
             setSavedCard(response.data.card);
