@@ -37,15 +37,18 @@ function Login() {
         const renderGoogleButton = async (response) => {
             setError('');
             setIsLoading(true);
-            const data = await loginWithGoogle(response.credential);
+            const result = await loginWithGoogle(response.credential);
             setIsLoading(false);
 
-            if (!data) {
-                setError('Google sign-in failed. Please verify the Google OAuth configuration.');
+            if (!result.success) {
+                setError(
+                    result.message ||
+                        'Google sign-in failed. Ensure VITE_GOOGLE_CLIENT_ID matches Railway GOOGLE_CLIENT_ID and your Vercel URL is in Google OAuth JavaScript origins.'
+                );
                 return;
             }
 
-            handleRoleRedirect(data);
+            handleRoleRedirect(result.data);
         };
 
         const tryInitializeGoogle = () => {

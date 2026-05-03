@@ -32,9 +32,16 @@ export const loginWithGoogle = async (credential) => {
     const response = await axios.post(`${BACKEND_URL}/auth/google`, { token: credential });
     const { token, id, role, isSubscribed } = response.data;
     persistLogin({ token, id, role, isSubscribed });
-    return response.data;
+    return { success: true, data: response.data };
   } catch (error) {
-    console.error('Google login failed:', error);
-    return null;
+    const server = error.response?.data;
+    const msg =
+      (typeof server?.detail === "string" && server.detail) ||
+      (typeof server?.message === "string" && server.message) ||
+      (typeof server?.error === "string" && server.error) ||
+      error.message ||
+      "Request failed";
+    console.error("Google login failed:", server || error.message);
+    return { success: false, message: msg };
   }
 };

@@ -87,13 +87,7 @@ const authorizeRoles = (...roles) => {
     };
 };
 
-// Routes
-
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-
-const client = new OAuth2Client(GOOGLE_CLIENT_ID);
-
-// Middleware to verify Google token and issue a JWT
+// Routes — Google OAuth (lazy client so Railway env is always read correctly; trim avoids copy/paste whitespace)
 const googleAuth = async (req, res) => {
     try {
         const { token } = req.body;
@@ -102,14 +96,16 @@ const googleAuth = async (req, res) => {
             return res.status(400).json({ message: 'Token is required' });
         }
 
-        if (!GOOGLE_CLIENT_ID) {
+        const googleClientId = String(process.env.GOOGLE_CLIENT_ID || '').trim();
+        if (!googleClientId) {
             return res.status(500).json({ message: 'Google OAuth is not configured on the server.' });
         }
 
-        // Verify the Google token
+        const client = new OAuth2Client(googleClientId);
+
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: GOOGLE_CLIENT_ID,
+            audience: googleClientId,
         });
 
         const payload = ticket.getPayload();
@@ -149,7 +145,10 @@ const googleAuth = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in Google Authentication:', error.message);
-        res.status(401).json({ message: 'Invalid token', error: error.message });
+        res.status(401).json({
+            message: 'Invalid Google credential',
+            detail: error.message,
+        });
     }
 };
 
