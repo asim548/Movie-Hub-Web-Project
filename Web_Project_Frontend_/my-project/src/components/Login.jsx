@@ -107,15 +107,15 @@ function Login() {
         e.preventDefault();
         setError('');
         setIsLoading(true);
-        const data = await loginUserSellerAdmin({ email, password });
+        const result = await loginUserSellerAdmin({ email, password });
         setIsLoading(false);
 
-        if (!data) {
-            setError('Invalid email or password. Please try again.');
+        if (!result.success) {
+            setError(result.message || 'Invalid email or password. Please try again.');
             return;
         }
 
-        handleRoleRedirect(data);
+        handleRoleRedirect(result.data);
     };
 
     return (

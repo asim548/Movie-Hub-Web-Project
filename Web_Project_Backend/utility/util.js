@@ -9,51 +9,83 @@ const SECRET_KEY = process.env.JWT_SECRET || "dev_jwt_secret_change_me";
 const app = express();
 app.use(express.json());
 
+async function comparePassword(plain, hash) {
+    if (!plain || !hash || typeof hash !== 'string' || hash.length < 30) {
+        return false;
+    }
+    try {
+        return await bcrypt.compare(plain, hash);
+    } catch {
+        return false;
+    }
+}
+
 // Function to login user
 const loginUserSellerAdmin = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
+    const rawEmail = req.body?.email;
+    const password = req.body?.password;
+    const email = typeof rawEmail === 'string' ? rawEmail.trim().toLowerCase() : '';
 
-        if(user)
-        {
-            console.log(user)
-            if (user && await bcrypt.compare(password, user.password)) {
-                const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
-                return res.status(200).json({
-                    token,
-                    id: user._id,
-                    role: "user",
-                    isSubscribed:user.isSubscribed,
-                    name: user.name || '',
-                    email: user.email || '',
-                    photo: user.photo || '',
-                    themeMode: user.themeMode || 'dark'
-                });
-            } else {
-                return res.status(401).json({ message: 'Invalid credentials' });
-            }
+    try {
+        if (!email || password === undefined || password === null) {
+            return res.status(400).json({ message: 'Email and password are required.' });
         }
-        else
-        {
-            const adminSeller = await AdminSeller.findOne({ email });
-            if (adminSeller && await bcrypt.compare(password, adminSeller.password)) {
-                const token = jwt.sign({ id: adminSeller._id, role: adminSeller.role }, SECRET_KEY, { expiresIn: '1h' });
-                return res.status(200).json({
-                    token,
-                    id: adminSeller._id,
-                    role: adminSeller.role,
-                    isSubscribed:null,
-                    name: adminSeller.name || '',
-                    email: adminSeller.email || '',
-                    photo: adminSeller.photo || '',
-                    themeMode: adminSeller.themeMode || 'dark'
+
+        const user = await User.findOne({ email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') });
+
+        if (user) {
+            const stored = user.password || '';
+            const looksLikeBcryptHash = stored.startsWith('$2');
+
+            if (!looksLikeBcryptHash) {
+                return res.status(401).json({
+                    message:
+                        'This account uses Google sign-in. Use “Continue with Google” instead of email and password.',
                 });
-            } else {
-                return res.status(401).json({ message: 'Invalid credentials' });
             }
+
+            const ok = await comparePassword(password, stored);
+            if (!ok) {
+                return res.status(401).json({ message: 'Invalid email or password.' });
+            }
+
+            const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
+            return res.status(200).json({
+                token,
+                id: user._id,
+                role: 'user',
+                isSubscribed: user.isSubscribed,
+                name: user.name || '',
+                email: user.email || '',
+                photo: user.photo || '',
+                themeMode: user.themeMode || 'dark',
+            });
         }
-       
+
+        const adminSeller = await AdminSeller.findOne({
+            email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
+        });
+
+        if (!adminSeller) {
+            return res.status(401).json({ message: 'Invalid email or password.' });
+        }
+
+        const ok = await comparePassword(password, adminSeller.password || '');
+        if (!ok) {
+            return res.status(401).json({ message: 'Invalid email or password.' });
+        }
+
+        const token = jwt.sign({ id: adminSeller._id, role: adminSeller.role }, SECRET_KEY, { expiresIn: '1h' });
+        return res.status(200).json({
+            token,
+            id: adminSeller._id,
+            role: adminSeller.role,
+            isSubscribed: null,
+            name: adminSeller.name || '',
+            email: adminSeller.email || '',
+            photo: adminSeller.photo || '',
+            themeMode: adminSeller.themeMode || 'dark',
+        });
     } catch (error) {
         return res.status(500).json({ message: 'Internal server error', error: error.message });
     }

@@ -16,14 +16,18 @@ export const loginUserSellerAdmin = async ({ email, password }) => {
     const response = await axios.post(`${BACKEND_URL}/login/userSellerAdmin`, { email, password });
     const { token, id, role, isSubscribed } = response.data;
 
-    console.log({ token, id, role,isSubscribed });
-
     persistLogin({ token, id, role, isSubscribed });
 
-    return { token, id, role,isSubscribed };
+    return { success: true, data: { token, id, role, isSubscribed } };
   } catch (error) {
-    console.error('Login failed:', error);
-    return null;
+    const server = error.response?.data;
+    const msg =
+      (typeof server?.message === "string" && server.message) ||
+      (typeof server?.error === "string" && server.error) ||
+      error.message ||
+      "Login failed";
+    console.error("Login failed:", server || error.message);
+    return { success: false, message: msg };
   }
 };
 
